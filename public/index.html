@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -39,6 +39,7 @@
 </head>
 <body>
     <div class="container">
+        <!--Screen to Login as an user, require to enter actual chat-->
         <div id="userArea" class="row">
             <div class="col-md-12">
                 <form id="userForm">
@@ -52,9 +53,11 @@
             </div>
         </div>
 
+        <!--Screen contains area which shows logged in users and area which shows send messages and a field to write new messages-->
         <div id="messageArea" class="row">
             <div class="col-md-4">
                 <div class="card" id="user-card">
+                    <!--Logged in users-->
                     <div class="card-block">
                         <h2 class="card-title">Online Users</h2>
                         <div class="card-text">
@@ -64,6 +67,7 @@
                 </div>
             </div>
             <div class="col-md-8">
+                <!--Message window which shows messages and are to send messages-->
                 <div class="chat" id="chat"></div>
                 <form id="messageForm">
                     <div class="form-group">
@@ -80,26 +84,31 @@
     <script>
         $(function () {
             var socket = io.connect();
+            // refs to ids in the login screen
             var $userArea = $('#userArea');
             var $userForm = $('#userForm');
             var $userName = $('#userName');
 
+            // refs to ids in the message screen
             var $messageArea = $('#messageArea');
             var $users = $('#users');
             var $chat = $('#chat');
             var $messageForm = $('#messageForm');
             var $message = $('#message');
 
+            // Send written message to backend on send button click
             $messageForm.submit(function (e) {
                 e.preventDefault();
                 socket.emit('send message', $message.val());
                 $message.val('');
             });
 
+            // Add a message from another user to chat, if receive a message from the backend
             socket.on('new message', function (data) {
                 $chat.append('<div class="card message-card"><strong>' + data.user + ':</strong>' + data.msg + '</ div>');
             });
 
+            // Send user data from login screen to backend and switch to chat screen
             $userForm.submit(function (e) {
                 e.preventDefault();
                 socket.emit('new user', $userName.val(), function (data) {
@@ -111,6 +120,7 @@
                 $userName.val('');
             });
 
+            // Add logged in users to area, if receive a message from backend
             socket.on('get users', function (data) {
                 var html = '';
                 for (i = 0; i < data.length; i++) {
