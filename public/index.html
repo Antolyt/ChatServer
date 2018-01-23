@@ -32,9 +32,7 @@
             background-color: lightgray;
         }
 
-        #messageArea {
-            display: none;
-        }
+        
     </style>
 </head>
 <body>
@@ -127,6 +125,18 @@
                     html += '<li class="list-group-item">' + data[i] + '</ li>';
                 }
                 $users.html(html);
+            });
+
+            // Add data from database to chat
+            socket.on('messages from database', function (data) {
+                for (i = 0; i < data.length; i++) {
+                    $chat.append('<div class="card message-card"><strong>' + data[i].user + ':</strong>' + data[i].msg + '</ div>');
+                }
+            });
+
+            // Show database connection error
+            socket.on('connection error', function () {
+                $chat.append('<div class="card message-card" style="color: red;"><strong>An error occurred when trying to connect to the database. Previous messages cannot be displayed.</strong></ div>');
             });
         });
     </script>
